@@ -23,6 +23,8 @@ public class NPC {
 
         String[] a = getFromName(npcSkin);
 
+        byte mask = (0x01 | 0x02 | 0x04 | 0x08 | 0x10 | 0x20 | 0x40);
+
         MinecraftServer nmsServer = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer nmsWorld = (( CraftWorld ) location.getWorld()).getHandle();
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), npcName.replace("&","§"));
@@ -30,7 +32,9 @@ public class NPC {
 
         EntityPlayer npc = new EntityPlayer(nmsServer, nmsWorld, gameProfile, new PlayerInteractManager(nmsWorld));
         Player npcPlayer = npc.getBukkitEntity().getPlayer();
-        npcPlayer.setPlayerListName("");
+
+        DataWatcher watcher = npc.getDataWatcher();
+        watcher.set(DataWatcherRegistry.a.a(13), mask);
 
         npc.setLocation(location.getX()+0.5, location.getY()+1, location.getZ()+0.5, 90.0f, 0.0f);
 
