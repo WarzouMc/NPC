@@ -23,7 +23,7 @@ public class NPC {
 
         String[] a = getFromName(npcSkin);
 
-        MinecraftServer nmsServer = (( CraftServer ) Bukkit.getServer()).getServer();
+        MinecraftServer nmsServer = ((CraftServer) Bukkit.getServer()).getServer();
         WorldServer nmsWorld = (( CraftWorld ) location.getWorld()).getHandle();
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), npcName.replace("&","§"));
         gameProfile.getProperties().put("textures", new Property("textures", a[0], a[1]));
@@ -35,12 +35,15 @@ public class NPC {
         npc.setLocation(location.getX()+0.5, location.getY()+1, location.getZ()+0.5, 90.0f, 0.0f);
 
         for(Player player : Bukkit.getOnlinePlayers()){
-
             PlayerConnection connection = (( CraftPlayer ) player).getHandle().playerConnection;
             connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, npc));
             connection.sendPacket(new PacketPlayOutNamedEntitySpawn(npc));
-            connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npc));
-
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, npc));
+                }
+            }.runTaskLater(main, 50);
         }
 
     }
